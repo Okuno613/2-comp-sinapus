@@ -186,7 +186,7 @@ void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,dou
   fprintf(fp3,"%lf \t %lf \n",t,V_s[0]);  
   fprintf(fp4,"%lf \t %lf \n",t,V_d[0]);
   fprintf(fp6,"%lf \t %lf \n",t,v[0]);
-  fprintf(fp2,"%lf \t %lf \n",t,v[0]);
+  fprintf(fp2,"%lf \t %lf \n",t,s[0]);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
 
