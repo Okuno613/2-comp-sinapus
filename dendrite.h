@@ -8,16 +8,17 @@
 #include <math.h>
 
 const double DT = 0.01;
-const int TEND = 400;
+const int TEND = 800;
 const double t= 0.0;
 
-const int NUM = pow(2,8);
+const int NUM = pow(2,6);
 const int Threads = 128;
 
 const double TAU = 1.0;
 const double TAU_recep =10.0;
 const double TAU_sinapus =20.0;
 const double TAU_sinapus_long =1000.0;
+const double TAU_egp =20.0;
 // time constant of neuron (ms)
 
 const double lambda = 30.0;
@@ -36,9 +37,10 @@ const double w_minus = 2;
 const double w_match = 25.0;
 const double w_plus = w_match*0.7;
 
-const double w_np =10;
-const double theta_z =3;
-const double epshiron_z=1;
+const double w_egp =50;
+const double w_egp_out = 8;
+const double theta_egp =3;
+const double epshiron_egp=1;
 
 
 const double STD_N = 2.0;//standard deviation of threshold (mV)
@@ -80,7 +82,7 @@ const int FT=500;
 const int sq = sqrt(NUM);
 const double sigma = NUM/4;
 
-const double I0= 9.0* sqrt(2*M_PI);
+const double I0= 13.0* sqrt(2*M_PI);
 const double I0lif=10;
 
 
