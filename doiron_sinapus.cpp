@@ -18,6 +18,17 @@ double vrunge(double *v, double *inp, int i){
   v[i] += (kv1 + 2.0*kv2 + 2.0*kv3 + kv4)/6.0;
 }
 
+double ds(double s,double o){
+  return (-s+lambda*o)/TAU_sinapus;
+}
+
+double srunge(double *s, double o,int i){
+  double ks1 = DT*ds(s[i], o);
+  double ks2 = DT*ds(s[i]+ks1*0.5, o);
+  double ks3 = DT*ds(s[i]+ks2*0.5, o);
+  double ks4 = DT*ds(s[i]+ks3,o);
+  s[i] += (ks1 + 2.0*ks2 + 2.0*ks3 + ks4)/6.0;
+}
 
 double dV_d(double V_d,double V_s,double h_d,double n_d,double p_d){
   double m_inf_d=1/(1+exp(-(V_d-V12_d)/k_m_inf_d));
@@ -116,10 +127,11 @@ void init(double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *
   }
 }
 
-void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d,  int *spike_s,int *spike_d, double *inp, double t,int *spikecnt_s,int *spikecnt_d,int *count_s,int *count_d,double *THl,FILE *fp1,FILE *fp2,FILE *fp3,FILE *fp4,FILE *fp5,FILE *fp6)
+void calv(double *v,double *u,double *s,double *s_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d,  int *spike_s,int *spike_d, double *inp, double t,int *spikecnt_s,int *spikecnt_d,int *count_s,int *count_d,double *THl,FILE *fp1,FILE *fp2,FILE *fp3,FILE *fp4,FILE *fp5,FILE *fp6)
 {
   int i0=(t/TEND)*NUM/2;
   //  int j0=sq/2;
+  int sum=0;
 
   #pragma omp parallel for
   for(int i=0;i<NUM;i++){
@@ -133,15 +145,17 @@ void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,dou
     
     if(v[i] > TH){
       v[i] =30;
-      //srunge(s,1,i);
-      s[i]=s[i]+((s[i]+TAU_sinapus)/TAU_sinapus);
+      srunge(s,10,i);
       spike_d[i] = spike_d[i]+1;
       spikecnt_d[i]=spike_d[i];
       // fprintf(fp2,"%d\t %d\t %d\n \n",i,int(t),spikecnt_d[i]);  
+    }else{
+      srunge(s,0,i);
     }
 
     if(i%2==0){
       u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
+    
       runge(u,V_s, n_s,V_d,h_d,n_d,p_d,i/2);
     }
 
@@ -155,8 +169,7 @@ void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,dou
 
       fprintf(fp1,"%d\t %d\t %d\n \n",i,int(t),spikecnt_s[i] );
     }
-    s[i]=s[i]-(s[i]/1000);
-    //    s[i]=s[i]-0.01;
+
     
     if(V_d[i] > 20 and count_d[i] == 0){
       spike_d[i] = spike_d[i]+1;
@@ -166,11 +179,7 @@ void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,dou
       //fprintf(fp2,"%d\t %d\t %d\n \n",i,int(t),spikecnt_d[i] );
     }
 
-    if(int(t)%50==0){
-      if (spike_s[i]>5){
-	s[i]=s[i]-1;
-      }
-      
+    if(int(t)%10==0){
       spike_s[i]=0;
       spike_d[i]=0;
     }
@@ -183,6 +192,7 @@ void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,dou
     }
     
   }
+  
   fprintf(fp3,"%lf \t %lf \n",t,V_s[0]);  
   fprintf(fp4,"%lf \t %lf \n",t,V_d[0]);
   fprintf(fp6,"%lf \t %lf \n",t,v[0]);
@@ -190,9 +200,12 @@ void calv(double *v,double *u,double *s,double *V_s, double *n_s,double *V_d,dou
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
 
+#pragma omp parallel for
+  for(int i=0;i<NUM;i++){
+    int tcnt=int(t/DT);
+    s_egp[tcnt]+=spike_s[i];
+  }
 }
-
-
 
 void Simulation::sim()
 {
@@ -223,6 +236,9 @@ void Simulation::sim()
     int *spikecnt_d = new int[NUM];
     double *THl =new double[NUM];
 
+    double *s_egp =new double[int(TEND/DT)];
+
+
     FILE *fp1,*fp2,*fp3,*fp4,*fp5,*fp6;
     fp1=fopen("Vs_moved.txt","w");
     fp2=fopen("s.txt","w");
@@ -233,7 +249,8 @@ void Simulation::sim()
 
     init(V_s,n_s, V_d, h_d, n_d, p_d, spike_s,spike_d, inp, THl,spikecnt_s,spikecnt_d,count_s,count_d);
     for(;;){
-      calv(v,u,s,V_s, n_s, V_d, h_d, n_d, p_d, spike_s,spike_d,inp, t, spikecnt_s,spikecnt_d,count_s,count_d,THl,fp1,fp2,fp3,fp4,fp5,fp6);
+      calv(v,u,s,s_egp,V_s, n_s, V_d, h_d, n_d, p_d, spike_s,spike_d,inp, t, spikecnt_s,spikecnt_d,count_s,count_d,THl,fp1,fp2,fp3,fp4,fp5,fp6);
+
       count++;
       t = count * DT;
       if( t > TEND){

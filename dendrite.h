@@ -17,7 +17,10 @@ const int Threads = 128;
 const double TAU = 1.0;
 const double TAU_recep =10.0;
 const double TAU_sinapus =20.0;
+const double TAU_sinapus_long =1000.0;
 // time constant of neuron (ms)
+
+const double lambda = 30.0;
 
 const double TH0 = 1.0;
 const double a = 5.0;
@@ -30,7 +33,7 @@ const double TH = -55.0;// (mV)
 const double SP = 10.0;
 
 const double w_minus = 2;
-const double w_match = 10.0;
+const double w_match = 25.0;
 const double w_plus = w_match*0.7;
 
 const double w_np =10;
