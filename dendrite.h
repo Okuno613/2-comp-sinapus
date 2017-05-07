@@ -8,8 +8,10 @@
 #include <math.h>
 
 const double DT = 0.01;
-const int TEND = 1000;
+const int TEND = 2000;
 const double t= 0.0;
+const double TSTART = 300;
+const double TPERIOD = 1000;
 
 const int NUM = pow(2,8);
 const int Threads = 128;
@@ -21,8 +23,8 @@ const double TAU_sinapus_long =1000.0;
 const double TAU_egp =20.0;
 // time constant of neuron (ms)
 
-const double lambda = 30.0;
-const double Iegp_sinapus = 30.0;
+const double lambda = 40.0;
+const double Iegp_sinapus = 40.0;
 
 const double TH0 = 1.0;
 const double a = 5.0;
@@ -34,13 +36,13 @@ const double V0 = -70.0;// (mV)
 const double TH = -55.0;// (mV)
 const double SP = 10.0;
 
-const double w_minus = 2;
-const double w_match = 25.0;
+const double w_minus = 3;
+const double w_match = 30.0;
 const double w_plus = w_match*0.7;
 
-const double w_egp =20;
-const double w_egp_out = 15;
-const double theta_egp =3;
+const double w_egp =10;
+const double w_egp_out = 25;
+const double theta_egp =0;
 const double epshiron_egp=1;
 
 

@@ -31,7 +31,7 @@ double srunge(double *s, double o,int i){
 }
 
 double dsegp(double segp,double Iz){ //true
-  return (- segp + (w_egp*Iz) )/TAU_egp;
+  return (-segp + (w_egp*Iz) )/TAU_egp;
 }
 
 double segprunge(double *A_egp, double Iz,int tcnt){
@@ -41,12 +41,6 @@ double segprunge(double *A_egp, double Iz,int tcnt){
   double ksegp4 = DT*dsegp(A_egp[tcnt]+ksegp3,Iz);
   A_egp[tcnt] += (ksegp1 + 2.0*ksegp2 + 2.0*ksegp3 + ksegp4)/6.0;
 }
-
-/*
-double szegp(double segp){
-  return 1/(1+exp((-Aegp)/epshiron_egp));
-}
-*/
 
 double dV_d(double V_d,double V_s,double h_d,double n_d,double p_d){
   double m_inf_d=1/(1+exp(-(V_d-V12_d)/k_m_inf_d));
@@ -147,7 +141,7 @@ void init(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     s[i]=0;
   }
 #pragma omp parallel for
-  for(int tcnt=0;tcnt<int(TEND/DT);tcnt++){
+  for(int tcnt=TSTART;tcnt<int(TEND/DT);tcnt++){
     s_egp[tcnt]=0;
     A_egp[tcnt]=0;
   }
@@ -156,10 +150,11 @@ void init(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d,  int *spike_s,int *spike_d, double *inp, double t,int *spikecnt_s,int *spikecnt_d,int *count_s,int *count_d,double *THl,FILE *fp1,FILE *fp2,FILE *fp3,FILE *fp4,FILE *fp5,FILE *fp6,FILE *fp7)
 {
   int i0=(t/TEND)*NUM/2;
-  int tcnt=int(t/DT);
+  int tcnt=int(t);
   //  int j0=sq/2;
   double Iz=0;
-  //s_egp[tcnt]=0;
+  s_egp[tcnt]=0;
+  A_egp[tcnt]=0;
 
   #pragma omp parallel for
   for(int i=0;i<NUM;i++){
@@ -186,26 +181,30 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     if (tcnt>101){
       if(i<2){
 	u[i/2] = w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-100];
-      }
-      if( ((NUM/2)-2)<i){
-	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i]-w_egp_out*s_egp[tcnt-100];
       }else{
 	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-100];
       }
+      if( ((NUM/2)-2)<i){
+      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i]-w_egp_out*s_egp[tcnt-100];
     }else{
+      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-100];
+    }
+
+      
+    }else if(tcnt<101){
       if(i<2){
 	u[i/2] = w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
-      }
-      if( ((NUM/2)-2)<i){
-	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i];
       }else{
 	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
-    }
-    }
-    
-    
-  
+      }
 	
+    if( ((NUM/2)-2)<i){
+      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i];
+    }else{
+      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
+    }
+    }
+    	
       runge(u,V_s, n_s,V_d,h_d,n_d,p_d,i/2);
     }
 
@@ -254,19 +253,19 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     Iz = Iz+ Iegp_sinapus*count_s[i];
     //spike_s[i]=0;
   }
+  
   segprunge(A_egp,Iz,int(tcnt));
   
   s_egp[tcnt]= 1/(1+exp((-(A_egp[tcnt]))/epshiron_egp));
-  
-  fprintf(fp7,"%lf \t %lf \n",t,s_egp[tcnt]);
+
  
-  
+  fprintf(fp7,"%lf \t %lf \n",t,s_egp[tcnt]*w_egp_out);
   Iz=0;
 }
 
 void Simulation::sim()
 {
-    int count = 0;
+    int count = 0.0;
 
 
     double *v =new double[NUM];
@@ -306,14 +305,13 @@ void Simulation::sim()
     fp7=fopen("segp.txt","w");
 
     init(v,u,s,s_egp,A_egp,V_s,n_s, V_d, h_d, n_d, p_d, spike_s,spike_d, inp, THl,spikecnt_s,spikecnt_d,count_s,count_d);
-    for(;;){
+    for(count=0;;count++){
       
 
       calv(v,u,s,s_egp,A_egp,V_s, n_s, V_d, h_d, n_d, p_d, spike_s,spike_d,inp, t, spikecnt_s,spikecnt_d,count_s,count_d,THl,fp1,fp2,fp3,fp4,fp5,fp6,fp7);
 
-      count++;
       t = count * DT;
-      if( t > TEND){
+      if( t > TPERIOD){
 	break;
       }
     }
