@@ -20,7 +20,7 @@ const double TAU = 1.0;
 const double TAU_recep =10.0;
 const double TAU_sinapus =20.0;
 const double TAU_sinapus_long =1000.0;
-const double TAU_egp =20.0;
+const double TAU_egp =10.0;
 // time constant of neuron (ms)
 
 const double lambda = 40.0;
@@ -36,9 +36,10 @@ const double V0 = -70.0;// (mV)
 const double TH = -55.0;// (mV)
 const double SP = 10.0;
 
-const double w_minus = 3;
-const double w_match = 30.0;
-const double w_plus = w_match*0.7;
+
+const double w_match = 25.0;
+const double w_plus = w_match*0.8;
+const double w_minus = w_match*0.1;
 
 const double w_egp =10;
 const double w_egp_out = 25;

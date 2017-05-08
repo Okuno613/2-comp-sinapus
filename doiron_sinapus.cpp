@@ -178,20 +178,20 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     }
 
     if(i%2==0 or i==(NUM+1)/2){
-    if (tcnt>101){
+    if (tcnt>11){
       if(i<2){
-	u[i/2] = w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-100];
+	u[i/2] = w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-10];
       }else{
-	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-100];
+	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-10];
       }
       if( ((NUM/2)-2)<i){
-      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i]-w_egp_out*s_egp[tcnt-100];
+      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i]-w_egp_out*s_egp[tcnt-10];
     }else{
-      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-100];
+      u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-10];
     }
 
       
-    }else if(tcnt<101){
+    }else if(tcnt<11){
       if(i<2){
 	u[i/2] = w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
       }else{
@@ -259,7 +259,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   s_egp[tcnt]= 1/(1+exp((-(A_egp[tcnt]))/epshiron_egp));
 
  
-  fprintf(fp7,"%lf \t %lf \n",t,s_egp[tcnt]*w_egp_out);
+  fprintf(fp7,"%lf \t %lf \n",t,s_egp[tcnt]);
   Iz=0;
 }
 
