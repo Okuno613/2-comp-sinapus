@@ -244,7 +244,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   fprintf(fp3,"%lf \t %lf \n",t,V_s[3]);  
   fprintf(fp4,"%lf \t %lf \n",t,V_d[3]);
   fprintf(fp6,"%lf \t %lf \n",t,v[3]);
-  fprintf(fp2,"%lf \t %lf \n",t,s[5]);
+  fprintf(fp2,"%lf \t %lf \n",t,s[3]*lambda);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
 
@@ -253,8 +253,10 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     Iz = Iz+ Iegp_sinapus*count_s[i];
     //spike_s[i]=0;
   }
+
   
   segprunge(A_egp,Iz,int(tcnt));
+  
   
   s_egp[tcnt]= 1/(1+exp((-(A_egp[tcnt]))/epshiron_egp));
 
