@@ -30,8 +30,8 @@ double srunge(double *s, double o,int i){
   s[i] += (ks1 + 2.0*ks2 + 2.0*ks3 + ks4)/6.0;
 }
 
-double dsegp(double segp,double Iz){ //true
-  return (-segp + (w_egp*Iz) )/TAU_egp;
+double dsegp(double A_egp,double Iz){ //true
+  return (-A_egp + (w_egp*Iz*Iegp_sinapus) )/TAU_egp;
 }
 
 double segprunge(double *A_egp, double Iz,int tcnt){
@@ -153,8 +153,8 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   int tcnt=int(t);
   //  int j0=sq/2;
   double Iz=0;
-  s_egp[tcnt]=0;
-  A_egp[tcnt]=0;
+  //s_egp[tcnt]=0;
+  //A_egp[tcnt]=0;
 
   #pragma omp parallel for
   for(int i=0;i<NUM;i++){
@@ -250,7 +250,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 
 #pragma omp parallel for
   for(int i=0;i<NUM;i++){
-    Iz = Iz+ Iegp_sinapus*count_s[i];
+    Iz = Iz+ count_s[i];
     //spike_s[i]=0;
   }
 
@@ -258,7 +258,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   segprunge(A_egp,Iz,int(tcnt));
   
   
-  s_egp[tcnt]= 1/(1+exp((-(A_egp[tcnt]))/epshiron_egp));
+  s_egp[tcnt]= 1/(1+exp((-(A_egp[tcnt])+theta_egp)/epshiron_egp));
 
  
   fprintf(fp7,"%lf \t %lf \n",t,s_egp[tcnt]);

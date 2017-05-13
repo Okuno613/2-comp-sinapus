@@ -11,20 +11,20 @@ const double DT = 0.01;
 const int TEND = 2000;
 const double t= 0.0;
 const double TSTART = 300;
-const double TPERIOD = 1000;
+const double TPERIOD = 500;
 
 const int NUM = pow(2,8);
 const int Threads = 128;
 
 const double TAU = 1.0;
 const double TAU_recep =10.0;
-const double TAU_sinapus =20.0;
+const double TAU_sinapus =10.0;
 const double TAU_sinapus_long =1000.0;
-const double TAU_egp =20.0;
+const double TAU_egp =2.0;
 // time constant of neuron (ms)
 
-const double lambda = 40.0;
-const double Iegp_sinapus = 40.0;
+const double lambda = 30.0;
+const double Iegp_sinapus = 30.0;
 
 const double TH0 = 1.0;
 const double a = 5.0;
@@ -37,14 +37,14 @@ const double TH = -55.0;// (mV)
 const double SP = 10.0;
 
 
-const double w_match = 25.0;
+const double w_match = 35.0;
 const double w_plus = w_match*0.8;
 const double w_minus = w_match*0.1;
 
 const double w_egp =10;
-const double w_egp_out = 30;
-const double theta_egp =2;
-const double epshiron_egp=0.05;
+const double w_egp_out = 20;
+const double theta_egp =0.6;
+const double epshiron_egp=0.5;
 
 
 const double STD_N = 2.0;//standard deviation of threshold (mV)
