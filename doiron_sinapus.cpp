@@ -211,14 +211,16 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     
     if(V_s[i] > 20 and count_s[i] == 0){
       spike_s[i] = spike_s[i]+1;
-      spikecnt_s[i]=spike_s[i];
+      //spikecnt_s[i]=spike_s[i];
       //     s[i]=s[i]-(s[i]/TAU_sinapus);
       //THl[i]=THl[i]+THup;
       count_s[i]=1;
-      fprintf(fp1,"%d\t %d\t %d\n \n",i,int(t),spikecnt_s[i] );
+      fprintf(fp1,"%d\t %d\t %03d\n",i,int(t),(spikecnt_d[i]-spikecnt_s[i]) );
+      spikecnt_s[i]=int(t);     
     }
-
-    
+      spikecnt_d[i]=int(t);
+      
+      /*
     if(V_d[i] > 20 and count_d[i] == 0){
       spike_d[i] = spike_d[i]+1;
       spikecnt_d[i]=spike_d[i];
@@ -226,6 +228,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
       //THl[i]=THl[i]+THup;
       //fprintf(fp2,"%d\t %d\t %d\n \n",i,int(t),spikecnt_d[i] );
     }
+      */
 
     if(int(t)%1==0){
       spike_s[i]=0;
