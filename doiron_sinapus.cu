@@ -118,33 +118,34 @@ __global__ double runge(double *u,double *V_s, double *n_s,double *V_d,double *h
 
   
 
-void init(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d, int *spike_s,int *spike_d, double *inp,double *THl,int *spikecnt_s,int *spikecnt_d,int *count_s,int *count_d)
+__grobal__ void init(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d, int *spike_s,int *spike_d, double *inp,double *THl,int *spikecnt_s,int *spikecnt_d,int *count_s,int *count_d)
 {
-  #pragma omp parallel for
-  for(int i=0;i<NUM;i++){
-    V_s[i] = -70;
-    //n_s[i] = 1/(1+exp(-(-55-V12_n_d)/k_n_s));
-    V_d[i] = -70.5;
-    /*    h_d[i] = 1/(1+exp(-(-54.5-V12_n_d)/k_h_d));
-    n_d[i] = 1/(1+exp(-(-54.5-V12_n_d)/k_n_d));
-    p_d[i] = 1/(1+exp(-(-54.5-V12_n_d)/k_p_d));
-    */
-    inp[i] = 0;
-    spike_s[i] = 0;
-    spike_d[i] =0;
-    spikecnt_s[i]=0;
-    spikecnt_d[i]=0;
-    count_s[i]=0;
-    count_d[i]=0;
-    THl[i]=TH;
-    v[i]=0;
-    u[i]=0;
-    s[i]=0;
-  }
-#pragma omp parallel for
-  for(int tcnt=TSTART;tcnt<int(TEND/DT);tcnt++){
-    s_egp[tcnt]=0;
-    A_egp[tcnt]=0;
+  int i = threadIdx.x + blockIdx.x * blockDim.x;
+  V_s[i] = -70;
+  //n_s[i] = 1/(1+exp(-(-55-V12_n_d)/k_n_s));
+  V_d[i] = -70.5;
+  /*    h_d[i] = 1/(1+exp(-(-54.5-V12_n_d)/k_h_d));
+	n_d[i] = 1/(1+exp(-(-54.5-V12_n_d)/k_n_d));
+	p_d[i] = 1/(1+exp(-(-54.5-V12_n_d)/k_p_d));
+  */
+  inp[i] = 0;
+  spike_s[i] = 0;
+  spike_d[i] =0;
+  spikecnt_s[i]=0;
+  spikecnt_d[i]=0;
+  count_s[i]=0;
+  count_d[i]=0;
+  THl[i]=TH;
+  v[i]=0;
+  u[i]=0;
+  s[i]=0;
+}
+  
+__grobal__ void init_egp(double *s_egp,double *A_egp)
+{
+  int tcnt = threadIdx.x + blockIdx.x * blockDim.x;
+  s_egp[tcnt]=0;
+  A_egp[tcnt]=0;
   }
 }
 
@@ -248,16 +249,16 @@ __grobal__ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,d
   fprintf(fp4,"%lf \t %lf \n",t,V_d[3]);
   fprintf(fp6,"%lf \t %lf \n",t,v[3]);
   fprintf(fp2,"%lf \t %lf \n",t,s[3]*lambda);
+}
+
+__grobal__ void calegp(double *s_egp,double *A_egp,double t){
+
+  int tcnt=int(t);
+  int i = threadIdx.x + blockIdx.x * blockDim.x;
+  Iz = Iz+ count_s[i];
   
-  
-#pragma omp parallel for
-  for(int i=0;i<NUM;i++){
-    Iz = Iz+ count_s[i];
-  }
   
   segprunge(A_egp,Iz,int(tcnt));
-  
-  
   s_egp[tcnt]= 1/(1+exp((-(A_egp[tcnt])+theta_egp)/epshiron_egp));
   
   
@@ -340,10 +341,14 @@ void Simulation::sim()
     fp7=fopen("segp.txt","w");
 
     init<<<NUM/ Threads, Threads>>(v,u,s,s_egp,A_egp,V_s,n_s, V_d, h_d, n_d, p_d, spike_s,spike_d, inp, THl,spikecnt_s,spikecnt_d,count_s,count_d);
+    init_egp<<<NUM/ Threads, Threads>>(s_egp,A_egp);
     for(count=0;;count++){
       
       calv<<<NUM/ Threads, Threads>>(v,u,s,s_egp,A_egp,V_s, n_s, V_d, h_d, n_d, p_d, spike_s,spike_d,inp, t, spikecnt_s,spikecnt_d,count_s,count_d,THl,fp1,fp2,fp3,fp4,fp5,fp6,fp7);
 
+      cudaMemcpy(v,d_v, size_d, cudaMemcpyDeviceToHost);
+      cudaMemcpy(u,d_u, size_d, cudaMemcpyDeviceToHost);
+      cudaMemcpy(s,d_s, size_d, cudaMemcpyDeviceToHost);
       cudaMemcpy(V_s,d_V_s, size_d, cudaMemcpyDeviceToHost);
       cudaMemcpy(n_s,d_n_s, size_d, cudaMemcpyDeviceToHost);
       cudaMemcpy(V_d,d_V_d, size_d, cudaMemcpyDeviceToHost);
@@ -357,6 +362,14 @@ void Simulation::sim()
       cudaMemcpy(count_d,d_count_d, size_i, cudaMemcpyDeviceToHost);
       cudaMemcpy(spike_d,d_spike_d, size_i, cudaMemcpyDeviceToHost);
       cudaMemcpy(spikecnt_d,d_spikecnt_d, size_i, cudaMemcpyDeviceToHost);
+      cudaMemcpy(s_egp,d_s_egp, size_t, cudaMemcpyDeviceToHost);
+      cudaMemcpy(A_egp,d_s_egp, size_t, cudaMemcpyDeviceToHost);
+
+      
+      calegp<<<NUM/ Threads, Threads>>(s_egp,A_egp,t);
+      cudaMemcpy(s_egp,d_s_egp, size_t, cudaMemcpyDeviceToHost);
+      cudaMemcpy(A_egp,d_s_egp, size_t, cudaMemcpyDeviceToHost);
+      
                   
       t = count * DT;
       if( t > TPERIOD){
