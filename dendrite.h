@@ -8,10 +8,10 @@
 #include <math.h>
 
 const double DT = 0.01;
-const int TEND = 2000;
+const int TEND = 1000;
 const double t= 0.0;
 const double TSTART = 300;
-const double TPERIOD = 500;
+const double TPERIOD = 1000;
 
 const int NUM = pow(2,8);
 const int Threads = 128;
@@ -84,7 +84,7 @@ const double V12_p_d=-65;
 
 const int FT=500;
 const int sq = sqrt(NUM);
-const double sigma = NUM/4;
+const double sigma = NUM/10;
 
 const double I0= 9.0* sqrt(2*M_PI);
 const double I0lif=10;
