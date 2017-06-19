@@ -159,9 +159,18 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   #pragma omp parallel for
   for(int i=0;i<NUM;i++){
 
-    inp[i] = I0 * exp( -( ((i-i0)*(i-i0)) / (2*sigma*sigma)));//*sin(2.0*M_PI*t*(400/1000));
-    
+    //inp[i] = I0 * exp( -( ((i-i0)*(i-i0)) / (2*sigma*sigma)));//*sin(2.0*M_PI*t*(400/1000));
 
+    if(t<(TEND/2)){
+      inp[i]=I0* (0.4+0.6*(TEND-t)/(TEND)) * exp( -( ((i-(NUM/4))*(i-(NUM/4))) / (2*sigma*sigma)));
+    }
+    if(t>(TEND/2)){
+      inp[i]=I0* (0.4+0.6*t/(TEND)) * exp( -( ((i-(NUM/4))*(i-(NUM/4))) / (2*sigma*sigma)));
+    }
+    if(t==500){
+      fprintf(fp2,"%d \t %lf \n",i,inp[i]);
+    }
+    
     vrunge(v,inp,i);
     if(v[i]>=20){
 	v[i]=V0;
@@ -247,7 +256,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   fprintf(fp3,"%lf \t %lf \n",t,V_s[3]);  
   fprintf(fp4,"%lf \t %lf \n",t,V_d[3]);
   fprintf(fp6,"%lf \t %lf \n",t,v[3]);
-  fprintf(fp2,"%lf \t %lf \n",t,s[3]*lambda);
+  //fprintf(fp2,"%lf \t %lf \n",t,inp[3]);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
 
@@ -302,7 +311,7 @@ void Simulation::sim()
 
     FILE *fp1,*fp2,*fp3,*fp4,*fp5,*fp6,*fp7;
     fp1=fopen("Vs_moved.txt","w");
-    fp2=fopen("s.txt","w");
+    fp2=fopen("inp.txt","w");
     fp3=fopen("Vs_volt.txt","w");
     fp4=fopen("Vd_volt.txt","w");
     fp5=fopen("ns.txt","w");
