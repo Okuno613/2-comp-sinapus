@@ -149,7 +149,8 @@ void init(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 
 void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d,  int *spike_s,int *spike_d, double *inp, double t,int *spikecnt_s,int *spikecnt_d,int *count_s,int *count_d,double *THl,FILE *fp1,FILE *fp2,FILE *fp3,FILE *fp4,FILE *fp5,FILE *fp6,FILE *fp7)
 {
-  int i0=(t/TEND)*NUM/2;
+  int i0=NUM/4;
+  //int i0=(t/TEND)*NUM/4;
   int tcnt=int(t);
   //  int j0=sq/2;
   double Iz=0;
@@ -162,10 +163,10 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     //inp[i] = I0 * exp( -( ((i-i0)*(i-i0)) / (2*sigma*sigma)));//*sin(2.0*M_PI*t*(400/1000));
 
     if(t<(TEND/2)){
-      inp[i]=I0* (0.4+0.6*(TEND-t)/(TEND)) * exp( -( ((i-(NUM/4))*(i-(NUM/4))) / (2*sigma*sigma)));
+      inp[i]=I0* (0.6+0.4*(TEND-t)/(TEND)) *  exp( -( ((i-(i0))*(i-(i0))) / (2*sigma*sigma)));
     }
     if(t>(TEND/2)){
-      inp[i]=I0* (0.4+0.6*t/(TEND)) * exp( -( ((i-(NUM/4))*(i-(NUM/4))) / (2*sigma*sigma)));
+      inp[i]=I0* (0.6+0.4*t/(TEND)) *  exp( -( ((i-(i0))*(i-(i0))) / (2*sigma*sigma)));
     }
     if(t==500){
       fprintf(fp2,"%d \t %lf \n",i,inp[i]);
@@ -254,7 +255,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   }
   
   fprintf(fp3,"%lf \t %lf \n",t,V_s[3]);  
-  fprintf(fp4,"%lf \t %lf \n",t,V_d[3]);
+  fprintf(fp4,"%lf \t %lf \n",t,u[20]);
   fprintf(fp6,"%lf \t %lf \n",t,v[3]);
   //fprintf(fp2,"%lf \t %lf \n",t,inp[3]);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
@@ -313,7 +314,7 @@ void Simulation::sim()
     fp1=fopen("Vs_moved.txt","w");
     fp2=fopen("inp.txt","w");
     fp3=fopen("Vs_volt.txt","w");
-    fp4=fopen("Vd_volt.txt","w");
+    fp4=fopen("u_volt.txt","w");
     fp5=fopen("ns.txt","w");
     fp6=fopen("v_volt.txt","w");
     fp7=fopen("segp.txt","w");
