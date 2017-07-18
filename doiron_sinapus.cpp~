@@ -2,7 +2,7 @@
   Since : May/19/2008
   Update: <2016/02/26>
 
-float,
+float
   =======================================*/
 #include "dendrite.h"
 #include <omp.h>
