@@ -162,19 +162,23 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 
     //inp[i] = I0 * exp( -( ((i-i0)*(i-i0)) / (2*sigma*sigma)));//*sin(2.0*M_PI*t*(400/1000));
 
+    /*
     if(t<(TEND/2)){
       inp[i]=I0* (0.6+0.4*(TEND-t)/(TEND)) *  exp( -( ((i-(i0))*(i-(i0))) / (2*sigma*sigma)));
     }
     if(t>(TEND/2)){
       inp[i]=I0* (0.6+0.4*t/(TEND)) *  exp( -( ((i-(i0))*(i-(i0))) / (2*sigma*sigma)));
     }
-    if(t==500){
+*/
+    
+    if(t==1000){
       fprintf(fp2,"%d \t %lf \n",i,inp[i]);
     }
     
+
     vrunge(v,inp,i);
     if(v[i]>=20){
-	v[i]=V0;
+  v[i]=V0;
     }
     
     if(v[i] > TH){
@@ -186,6 +190,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     }else{
       srunge(s,0,i);
     }
+
 
     if(i%2==0 or i==(NUM+1)/2){
     if (tcnt>11){
@@ -254,9 +259,9 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
     
   }
   
-  fprintf(fp3,"%lf \t %lf \n",t,V_s[3]);  
+  fprintf(fp3,"%lf \t %lf \n",t,V_s[20]);  
   fprintf(fp4,"%lf \t %lf \n",t,u[20]);
-  fprintf(fp6,"%lf \t %lf \n",t,v[3]);
+  fprintf(fp6,"%lf \t %lf \n",t,v[20]);
   //fprintf(fp2,"%lf \t %lf \n",t,inp[3]);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
@@ -280,7 +285,9 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 
 void Simulation::sim()
 {
-    int count = 0.0;
+  int count = 0.0;
+
+
 
 
     double *v =new double[NUM];
@@ -320,6 +327,41 @@ void Simulation::sim()
     fp7=fopen("segp.txt","w");
 
     init(v,u,s,s_egp,A_egp,V_s,n_s, V_d, h_d, n_d, p_d, spike_s,spike_d, inp, THl,spikecnt_s,spikecnt_d,count_s,count_d);
+    
+    
+    std::ifstream ifs;  // ファイル読み取り用ストリーム
+      ifs.open("inpts.txt");  // ファイルオープン
+
+      if(ifs.fail()){ // ファイルオープンに失敗したらそこで終了
+        std::cerr << "Cant file open\n";
+        exit(1);
+      }
+
+      char buf[400];  // データ一時保管用配列
+
+      int linenum = 0; // データの行数を数える
+
+      while(ifs.getline(buf,sizeof(buf))){  // ファイルから1行ずつ読み込む
+        linenum++;  // 行数をカウントしている
+      }
+
+      std::cerr << "Leading lines = " << linenum << "\n";
+
+      ifs.clear(); // ファイル末尾に到達というフラグをクリア
+      ifs.seekg(0, std::ios::beg);  // ファイル先頭に戻る
+
+      double *arr;
+      arr = new double[linenum];  // 行数 linenum 分の配列を動的に確保
+
+      for(int i=0 ; i<linenum ; i++){
+        ifs.getline(buf,sizeof(buf)); // 一行読み込んで…
+        inp[i] = atof(buf); // それを配列に格納
+      }
+      std::cerr <<"Load complete\n";
+      
+
+
+
     for(count=0;;count++){
       
 
