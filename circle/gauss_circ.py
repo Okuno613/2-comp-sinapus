@@ -7,7 +7,7 @@ Created on Wed Sep 13 17:47:44 2017
 
 import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
-OpenfileName='eodam_30_30_30_30'
+OpenfileName='eodam-circle_30_30_10_30'
 
 
 
