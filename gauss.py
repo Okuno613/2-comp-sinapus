@@ -2,7 +2,7 @@
 """
 Created on Wed Sep 13 17:47:44 2017
 
-@author: taro
+@author: tarol
 """
 
 import math, numpy, scipy.optimize
