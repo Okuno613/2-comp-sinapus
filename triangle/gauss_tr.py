@@ -9,7 +9,7 @@ import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
 
 
-OpenfileName='eodam-triangle_30_20_115_20'
+OpenfileName='eodam-triangle_30_20_30_20'
 
 
 
@@ -85,7 +85,7 @@ def main():
     plt.legend(['Fit', 'Original-data'])
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.ylim(-0.01, 0.04)
+    plt.ylim(-0.01, 0.5)
     plt.text(20, -.005, r" Ampritude : %10.5f +/- %10.5f"
           % (numpy.max(fitgauss), numpy.sqrt(covar_result[0][0]))+
           "\n Center       : %10.5f +/- %10.5f"
