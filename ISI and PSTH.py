@@ -19,7 +19,8 @@ def main():
     l=0
     j=0
     k=0
-    size=1000
+    size=2500
+    MAXtime=1700    
     cutsize=15
 
     numbers1 =numpy.zeros(size)
@@ -27,8 +28,8 @@ def main():
     numbers3 =numpy.zeros(size)
     isi =numpy.zeros(64)
     x_isi =numpy.arange(64)
-    psth =numpy.zeros(1000)
-    x_psth =numpy.arange(1000)
+    psth =numpy.zeros(MAXtime)
+    x_psth =numpy.arange(MAXtime)
     xmin, xmax, nx = 0.0, size, size
 
     for line in open(OpenfileName+'.txt', 'r'):
@@ -49,11 +50,11 @@ def main():
 
 
     for i in numbers2:
-        for j in range(1000):
+        for j in range(size):
             if numbers2[i]==j and 5<j:
                 psth[j]=psth[j]+1
                 
-    for i in range(1000):
+    for i in range(size):
         for j in range(64):
             if numbers3[i]==j and 0<j:
                 isi[j]=isi[j]+1                
