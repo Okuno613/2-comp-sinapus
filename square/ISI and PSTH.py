@@ -7,6 +7,7 @@ Created on Wed Sep 13 17:47:44 2017
 
 import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
+
 OpenfileName='V_moved'
 main()
 
@@ -85,7 +86,7 @@ def main():
     plt.xlabel('Time[ms]')
     plt.ylabel('#Spikes')
     #plt.ylim(-0.01, 0.04)
-    plt.savefig('PSTH'+str(OpenfileName)+'.png', dpi=150)
+    plt.savefig('PSTH '+str(OpenfileName)+'.png', dpi=150)
     plt.show()
     
     plt.bar(x_isi,isi)  # plot true curve
@@ -95,7 +96,7 @@ def main():
     plt.xlabel('Time[ms]')
     plt.ylabel('Interspike interval[ms]')
     #plt.ylim(-0.01, 0.04)
-    plt.savefig('ISI'+str(OpenfileName)+'.png', dpi=150)
+    plt.savefig('ISI '+str(OpenfileName)+'.png', dpi=150)
     plt.show()    
 
 

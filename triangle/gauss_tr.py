@@ -9,7 +9,7 @@ import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
 
 
-OpenfileName='eodam-triangle_30_20_30_20'
+OpenfileName='eodam-triangle_30_30_30_50'
 
 
 

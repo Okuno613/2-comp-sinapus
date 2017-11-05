@@ -7,7 +7,7 @@ Created on Wed Sep 13 17:47:44 2017
 
 import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
-OpenfileName='eodam_30_20_85_20'
+OpenfileName='eodam_40_20_40_20'
 
 
 

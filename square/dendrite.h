@@ -11,7 +11,7 @@ const double DT = 0.01;
 const int TEND = 300;
 const double t= 0.0;
 const double TSTART = 300;
-const double TPERIOD = 2000;
+const double TPERIOD = 1000;
 
 const int NUM = pow(2,8);
 const int Threads = 128;
@@ -86,7 +86,7 @@ const int FT=500;
 const int sq = sqrt(NUM);
 const double sigma = NUM/10;
 
-const double I0= 18;
+const double I0= 20;
 const double I0lif=10;
 
 
