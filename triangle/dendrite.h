@@ -86,7 +86,7 @@ const int FT=500;
 const int sq = sqrt(NUM);
 const double sigma = NUM/10;
 
-const double I0= 18;
+const double I0= 20;
 const double I0lif=10;
 
 

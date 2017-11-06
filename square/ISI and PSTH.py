@@ -4,15 +4,9 @@ Created on Wed Sep 13 17:47:44 2017
 
 @author: tarol
 """
-
 import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
 
-OpenfileName='V_moved'
-main()
-
-OpenfileName='Vs_moved'
-main()
 
 
 def main():
@@ -25,8 +19,8 @@ def main():
     j=0
     k=0
     tmps=0
-    size=5000
-    time=1800
+    size=10000
+    time=3600
     cutsize=20
 
     numbers1 =numpy.zeros(size)
@@ -101,3 +95,7 @@ def main():
 
 
 
+OpenfileName='V_moved'
+main()
+OpenfileName='Vs_moved'
+main()
