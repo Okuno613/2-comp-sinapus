@@ -85,7 +85,7 @@ def main():
     plt.legend(['Fit', 'Original-data'])
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.ylim(-0.01, 0.5)
+    plt.ylim(-0.01, 0.05)
     plt.text(20, -.005, r" Ampritude : %10.5f +/- %10.5f"
           % (numpy.max(fitgauss), numpy.sqrt(covar_result[0][0]))+
           "\n Center       : %10.5f +/- %10.5f"

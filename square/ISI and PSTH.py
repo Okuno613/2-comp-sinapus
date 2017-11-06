@@ -19,7 +19,7 @@ def main():
     j=0
     k=0
     tmps=0
-    size=10000
+    size=60000
     time=3600
     cutsize=20
 
