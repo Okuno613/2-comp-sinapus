@@ -7,26 +7,21 @@
 #include <stdio.h>
 #include <math.h>
 #include <omp.h>
-
+ 
 #define pi 3.1415926535         // 円周率
 
  // 離散フーリエ変換（読み込むファイル名, 書き込むファイル名）
 int dft(char filename1[], char filename2[])
-{
-  int k, n, N,tmp;
+{  
+        int k, n, N;
 	int spike=0;
 	int spikecnt=0;
 	int count=0;
 	int tmp_v=0;
-  int max = 100000;  // 読み込むデータ数の上限
-  double f1[max+1];
-  int plt[100];
+        int max = 100000;  // 読み込むデータ数の上限
+        double f1[max+1];
 	double ans;
-
-  for(k=0; k<100; k++){
-    plt[k]=0;
-  }
-
+	
         FILE *fp1, *fp2;
     // ファイルオープン(フーリエ変換したいデータファイル, フーリエ変換後のデータ保存用ファイル)
         if((fp1=fopen(filename1,"r"))==NULL){
@@ -42,7 +37,7 @@ int dft(char filename1[], char filename2[])
 	  printf("FILE2 not open\n");
         return -1;
         }
-
+	
         //実数部分と虚数部分に分けてフーリエ変換
         for(k=0; k<N; k++){
 	  tmp_v=f1[k];
@@ -54,21 +49,19 @@ int dft(char filename1[], char filename2[])
 	    count==1;
 	    if(spike != 1 && spike != 0){
 	      fprintf(fp2,"%02d\n",int(spike*0.1));
-        tmp=int(spike*0.1);
-        plt[tmp]=plt[tmp]+1
 	    }
 	  }
-
+	  
 	  if(f1[k]<=0){
 	    count=0;
 	  }
 
 	}
-
+  
         fclose(fp1);
         fclose(fp2);
-
-
+	
+	
         return 0;
 }
 

@@ -9,9 +9,7 @@ import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
 
 
-OpenfileName='eodam-triangle_30_30_115_30'
-
-
+OpenfileName='eodam-triangle_30_30_115_50' 
 
 def gaussian(x, A, mean, sigma):
     gauss = A/math.sqrt(2.0*math.pi)/sigma * numpy.exp(-((x-mean)/sigma)**2/2)
@@ -51,7 +49,7 @@ def main():
     y_meas = numbers + err_frac*base0*numpy.random.randn(len(x))
     y_err  = err_frac*base0*numpy.random.randn(len(x))
         
-    param0 = [10, argmax, 40, 1.0] # initial guess: χ^2, initial paramator
+    param0 = [10, argmax, 30, 1.0] # initial guess: χ^2, initial paramator
     param_output = scipy.optimize.leastsq(residuals_with_error, param0,
                                           args=(y_meas, x, y_err), 
                                           full_output=True)
@@ -97,5 +95,5 @@ def main():
     plt.show()
     
     
-    
+   
 main()

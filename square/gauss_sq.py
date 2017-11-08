@@ -7,7 +7,7 @@ Created on Wed Sep 13 17:47:44 2017
 
 import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
-OpenfileName='eodam_30_30_5_30'
+OpenfileName='eodam_30_30_85_50'
 
 
 
@@ -83,7 +83,7 @@ def main():
     plt.legend(['Fit', 'Original-data'])
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.ylim(-0.01, 0.04)
+    plt.ylim(-0.01, 0.06)
     plt.text(20, -.005, r" Ampritude : %10.5f +/- %10.5f"
           % (numpy.max(fitgauss), numpy.sqrt(covar_result[0][0]))+
           "\n Center       : %10.5f +/- %10.5f"
