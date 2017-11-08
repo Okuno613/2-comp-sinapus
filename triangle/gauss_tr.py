@@ -9,7 +9,7 @@ import math, numpy, scipy.optimize
 import matplotlib.pyplot as plt
 
 
-OpenfileName='eodam-triangle_30_30_30_50'
+OpenfileName='eodam-triangle_30_30_115_30'
 
 
 
@@ -51,7 +51,7 @@ def main():
     y_meas = numbers + err_frac*base0*numpy.random.randn(len(x))
     y_err  = err_frac*base0*numpy.random.randn(len(x))
         
-    param0 = [10, argmax, 30, 1.0] # initial guess: χ^2, initial paramator
+    param0 = [10, argmax, 40, 1.0] # initial guess: χ^2, initial paramator
     param_output = scipy.optimize.leastsq(residuals_with_error, param0,
                                           args=(y_meas, x, y_err), 
                                           full_output=True)
@@ -85,7 +85,7 @@ def main():
     plt.legend(['Fit', 'Original-data'])
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.ylim(-0.01, 0.05)
+    plt.ylim(-0.01, 0.04)
     plt.text(20, -.005, r" Ampritude : %10.5f +/- %10.5f"
           % (numpy.max(fitgauss), numpy.sqrt(covar_result[0][0]))+
           "\n Center       : %10.5f +/- %10.5f"
