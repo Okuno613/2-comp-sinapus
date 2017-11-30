@@ -7,9 +7,29 @@ float
 #include "dendrite.h"
 #include <omp.h>
 
+double ranpm() {
+  srand( (unsigned)time( NULL ) );
+  return 0.95+0.05*(double)rand()/((double)RAND_MAX+1);
+}
+
 double dv(double v ,double inp){
   return (-v+inp+V0)/TAU_recep;
 }
+
+double du(double u, double inp, double vrest){
+    return (inp + vrest);
+}
+
+double runge(double u, double inp, double vrest){
+    double k1 = DT*du(u, inp, vrest);
+    double k2 = DT*du(u+k1*0.5, inp, vrest);
+    double k3 = DT*du(u+k2*0.5, inp, vrest);
+    double k4 = DT*du(u+k3, inp, vrest);
+    u += (k1 + 2.0*k2 + 2.0*k3 + k4)/6.0;
+    return u;
+}
+
+
 double vrunge(double *v, double *inp, int i){
   double kv1 = DT*dv(v[i], inp[i]);
   double kv2 = DT*dv(v[i]+kv1*0.5, inp[i]);
@@ -17,6 +37,7 @@ double vrunge(double *v, double *inp, int i){
   double kv4 = DT*dv(v[i]+kv3,inp[i]);
   v[i] += (kv1 + 2.0*kv2 + 2.0*kv3 + kv4)/6.0;
 }
+
 
 double ds(double s,double o){
   return (-s+lambda*o)/TAU_sinapus;
@@ -149,9 +170,10 @@ void init(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   }
 }
 
-void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d,  int *spike_s,int *spike_d, double *inp, double t,int *spikecnt_s,int *spikecnt_d,int *spikecnt_v,int *count_s,int *count_d,double *THl,FILE *fp1,FILE *fp2,FILE *fp3,FILE *fp4,FILE *fp5,FILE *fp6,FILE *fp7)
+void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,double *V_s, double *n_s,double *V_d,double *h_d, double *n_d,double *p_d,  int *spike_s,int *spike_d, double *inp, double t,int *spikecnt_s,int *spikecnt_d,int *spikecnt_v,int *count_s,int *count_d,double *THl,FILE *fp1,FILE *fp2,FILE *fp3,FILE *fp4,FILE *fp5,FILE *fp6,FILE *fp7)
 {
   int i0=NUM/4;
+  double I=0;
   //int i0=(t/TEND)*NUM/4;
   int tcnt=int(t);
   //  int j0=sq/2;
@@ -161,7 +183,6 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 
   #pragma omp parallel for
   for(int i=0;i<NUM;i++){
-
     //inp[i] = I0 * exp( -( ((i-i0)*(i-i0)) / (2*sigma*sigma)));//*sin(2.0*M_PI*t*(400/1000));
     /*
     if(t<(TEND/2)){
@@ -194,6 +215,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
   	if(	1700	<t and t<=	1800	){	inp[i]=I0* ( (	0.911480 	 +(t-1700)*	0.000009 	) *  exp( -( (i-(	96.10438	 +(t-1700)*	0.000144 	))*(i-(	96.10438	 +(t-1700)*	0.000144 	))) / (2*(	38.83282	 +(t-1700)*	-0.001311 	 )*(	38.83282	 +(t-1700)*	-0.001311 	) ))); }
 
 
+    /*
     vrunge(v,inp,i);
     if(v[i]>=20){
 	     v[i]=V0;
@@ -205,6 +227,19 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
       //spikecnt_v[i]=spike_d[i];
       fprintf(fp4,"%d\t %d\t %03d\n",i,int(t),(spikecnt_d[i]-spikecnt_v[i]) );
       spikecnt_v[i]=int(t);
+    }else{
+      srunge(s,0,i);
+    }
+    */
+
+    v[i] = runge(v[i], 0, - b/a);
+
+
+    if(inp[i] > v[i]){
+        v[i] =v[i]+ b;
+        srunge(s,10,i);
+        fprintf(fp4,"%d\t %d\t %03d\n",i,int(t),(spikecnt_d[i]-spikecnt_v[i]) );
+        spikecnt_v[i]=int(t);
     }else{
       srunge(s,0,i);
     }
@@ -278,7 +313,7 @@ void calv(double *v,double *u,double *s,double *s_egp,double *A_egp,double *V_s,
 
   fprintf(fp3,"%lf \t %lf \n",t,V_s[3]);
   //fprintf(fp4,"%lf \t %lf \n",t,u[20]);
-  fprintf(fp6,"%lf \t %lf \n",t,v[3]);
+  fprintf(fp6,"%lf \t %lf \n",t,v[128]);
   //fprintf(fp2,"%lf \t %lf \n",t,inp[3]);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
@@ -308,6 +343,7 @@ void Simulation::sim()
     double *v =new double[NUM];
     double *u =new double[NUM];
     double *s =new double[NUM];
+    double *rs =new double[NUM];
 
     double *V_s =new double[NUM];
     double *n_s =new double[NUM];
@@ -346,7 +382,7 @@ void Simulation::sim()
     for(count=0;;count++){
 
 
-      calv(v,u,s,s_egp,A_egp,V_s, n_s, V_d, h_d, n_d, p_d, spike_s,spike_d,inp, t, spikecnt_s,spikecnt_d,spikecnt_v,count_s,count_d,THl,fp1,fp2,fp3,fp4,fp5,fp6,fp7);
+      calv(v,u,rs,s,s_egp,A_egp,V_s, n_s, V_d, h_d, n_d, p_d, spike_s,spike_d,inp, t, spikecnt_s,spikecnt_d,spikecnt_v,count_s,count_d,THl,fp1,fp2,fp3,fp4,fp5,fp6,fp7);
 
       t = count * DT;
       if( t > TPERIOD){

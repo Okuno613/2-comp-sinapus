@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <math.h>
+#include<time.h>
 
 const double DT = 0.01;
 const int TEND = 300;
@@ -28,7 +29,7 @@ const double Iegp_sinapus = 30.0;
 
 const double TH0 = 1.0;
 const double a = 5.0;
-const double b = 1.0;
+const double b = 1;
 
 
 const double INP = 9.0;
@@ -86,8 +87,8 @@ const int FT=500;
 const int sq = sqrt(NUM);
 const double sigma = NUM/10;
 
-const double I0= 22;
-const double I0lif=10;
+const double I0= 10;
+const double I0lif=0;
 
 
 const int size_d = sizeof(double)*NUM;

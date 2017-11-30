@@ -19,9 +19,9 @@ def main():
     j=0
     k=0
     tmps=0
-    size=10000
+    size=100000
     time=1800
-    cutsize=20
+    cutsize=100
 
     numbers1 =numpy.zeros(size)
     numbers2 =numpy.zeros(size)
@@ -55,8 +55,8 @@ def main():
             if numbers2[j]==i and 5<i:
                 psth[i]=psth[i]+1
                 tmps=tmps+psth[i]
-        if i%cutsize==0:
-            psth_sum[m]=tmps
+        if i%cutsize==0 or i==time-1:
+            psth_sum[m-1]=tmps
             m=m+1
             tmps=0
             
@@ -79,7 +79,7 @@ def main():
     plt.title("PSTH" )
     plt.xlabel('Time[ms]')
     plt.ylabel('#Spikes')
-    #plt.ylim(-0.01, 0.04)
+    plt.xlim(0, time)
     plt.savefig('PSTH '+str(OpenfileName)+'.png', dpi=150)
     plt.show()
     
@@ -97,5 +97,6 @@ def main():
 
 OpenfileName='V_moved'
 main()
-OpenfileName='Vs_moved'
-main()
+
+#OpenfileName='Vs_moved'
+#main()
