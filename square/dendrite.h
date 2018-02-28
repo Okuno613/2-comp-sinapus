@@ -12,7 +12,7 @@ const double DT = 0.01;
 const int TEND = 300;
 const double t= 0.0;
 const double TSTART = 300;
-const double TPERIOD = 1800;
+const double TPERIOD = 600;
 
 const int NUM = pow(2,8);
 const int Threads = 128;
