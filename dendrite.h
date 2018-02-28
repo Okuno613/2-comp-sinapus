@@ -9,7 +9,7 @@
 #include<time.h>
 
 const double DT = 0.01;
-const int TEND = 300;
+const int TEND = 1800;
 const double t= 0.0;
 const double TSTART = 300;
 const double TPERIOD = 600;
