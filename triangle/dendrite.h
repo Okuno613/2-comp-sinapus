@@ -6,24 +6,25 @@
 #include <stdlib.h>
 #include <vector>
 #include <math.h>
+#include<time.h>
 
 const double DT = 0.01;
-const int TEND = 300;
+const int TEND = 2500;
 const double t= 0.0;
 const double TSTART = 300;
-const double TPERIOD = 2500;
+const double TPERIOD = 600;
 
 const int NUM = pow(2,8);
 const int Threads = 128;
 
 const double TAU = 1.0;
 const double TAU_recep =10.0;
-const double TAU_sinapus =10.0;
+const double TAU_sinapus =50.0;
 const double TAU_sinapus_long =1000.0;
 const double TAU_egp =2.0;
 // time constant of neuron (ms)
 
-const double lambda = 30.0;
+const double lambda = 15.0;
 const double Iegp_sinapus = 30.0;
 
 const double TH0 = 1.0;
@@ -86,8 +87,8 @@ const int FT=500;
 const int sq = sqrt(NUM);
 const double sigma = NUM/10;
 
-const double I0= 22;
-const double I0lif=10;
+const double I0= 10;
+const double I0lif=0;
 
 
 const int size_d = sizeof(double)*NUM;
