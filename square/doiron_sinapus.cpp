@@ -183,18 +183,7 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
 
   #pragma omp parallel for
   for(int i=0;i<NUM;i++){
-    //inp[i] = I0 * exp( -( ((i-i0)*(i-i0)) / (2*sigma*sigma)));//*sin(2.0*M_PI*t*(400/1000));
-    /*
-    if(t<(TEND/2)){
-      inp[i]=I0* (0.6+0.4*(TEND-t)/(TEND)) *  exp( -( ((i-(i0))*(i-(i0))) / (2*sigma*sigma)));
-    }
-    if(t>(TEND/2)){
-      inp[i]=I0* (0.6+0.4*t/(TEND)) *  exp( -( ((i-(i0))*(i-(i0))) / (2*sigma*sigma)));
-    }
-    if(t==500){
-      fprintf(fp2,"%d \t %lf \n",i,inp[i]);
-    }
-    */
+
     if(	0	<t and t<=	100	){	inp[i]=I0* ( (	0.278166 	 +t*	-0.000091 	) *  exp( -( (i-(	96.10438	 +t*	0.000037 	))*(i-(	96.10438	 +t*	0.000037 	))) / (2*(	38.83282	 +t*	0.000475 	 )*(	38.83282	 +t*	0.000475 	) ))); }
   	if(	100	<t and t<=	200	){	inp[i]=I0* ( (	0.269061 	 +(t-100)*	-0.000031 	) *  exp( -( (i-(	96.47931	 +(t-100)*	0.000068 	))*(i-(	96.47931	 +(t-100)*	0.000068 	))) / (2*(	43.57787	 +(t-100)*	-0.000517 	 )*(	43.57787	 +(t-100)*	-0.000517 	) ))); }
   	if(	200	<t and t<=	300	){	inp[i]=I0* ( (	0.265919 	 +(t-200)*	-0.000062 	) *  exp( -( (i-(	97.16075	 +(t-200)*	-0.000073 	))*(i-(	97.16075	 +(t-200)*	-0.000073 	))) / (2*(	38.40746	 +(t-200)*	0.000119 	 )*(	38.40746	 +(t-200)*	0.000119 	) ))); }
@@ -214,23 +203,6 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
   	if(	1600	<t and t<=	1700	){	inp[i]=I0* ( (	0.241680 	 +(t-1600)*	0.000119 	) *  exp( -( (i-(	94.66218	 +(t-1600)*	0.000376 	))*(i-(	94.66218	 +(t-1600)*	0.000376 	))) / (2*(	51.94713	 +(t-1600)*	-0.000060 	 )*(	51.94713	 +(t-1600)*	-0.000060 	) ))); }
   	if(	1700	<t and t<=	1800	){	inp[i]=I0* ( (	0.253543 	 +(t-1700)*	0.000246 	) *  exp( -( (i-(	96.10438	 +(t-1700)*	0.000144 	))*(i-(	96.10438	 +(t-1700)*	0.000144 	))) / (2*(	38.83282	 +(t-1700)*	-0.001311 	 )*(	38.83282	 +(t-1700)*	-0.001311 	) ))); }
 
-
-    /*
-    vrunge(v,inp,i);
-    if(v[i]>=20){
-	     v[i]=V0;
-    }
-    if(v[i] > TH){
-      v[i] =30;
-      srunge(s,10,i);
-      //spike_d[i] = spike_d[i]+1;
-      //spikecnt_v[i]=spike_d[i];
-      fprintf(fp4,"%d\t %d\t %03d\n",i,int(t),(spikecnt_d[i]-spikecnt_v[i]) );
-      spikecnt_v[i]=int(t);
-    }else{
-      srunge(s,0,i);
-    }
-    */
     if(inp[i]>1){
       v[i] = runge(v[i], 0, - b/a);
     }
@@ -244,6 +216,7 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
       srunge(s,0,i);
     }
 
+//    if(i%2==0 or i==(NUM+1)/2){
     if(i%2==0 or i==(NUM+1)/2){
     if (tcnt>11){
       if(i<2){
@@ -251,7 +224,7 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
       }else{
 	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-10];
       }
-      if( ((NUM/2)-2)<i){
+      if( ((NUM)-2)<i){
       u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i]-w_egp_out*s_egp[tcnt-10];
     }else{
       u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2]-w_egp_out*s_egp[tcnt-10];
@@ -265,7 +238,7 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
 	u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
       }
 
-    if( ((NUM/2)-2)<i){
+    if( ((NUM)-2)<i){
       u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i];
     }else{
       u[i/2] = -w_minus*s[i-2] + w_plus*s[i-1] + w_match*s[i] + w_plus*s[i+1] - w_minus*s[i+2];
@@ -278,24 +251,12 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
 
     if(V_s[i] > 20 and count_s[i] == 0){
       spike_s[i] = spike_s[i]+1;
-      //spikecnt_s[i]=spike_s[i];
-      //     s[i]=s[i]-(s[i]/TAU_sinapus);
-      //THl[i]=THl[i]+THup;
       count_s[i]=1;
       fprintf(fp1,"%d\t %d\t %03d\n",i,int(t),(spikecnt_d[i]-spikecnt_s[i]) );
       spikecnt_s[i]=int(t);
     }
       spikecnt_d[i]=int(t);
 
-      /*
-    if(V_d[i] > 20 and count_d[i] == 0){
-      spike_d[i] = spike_d[i]+1;
-      spikecnt_d[i]=spike_d[i];
-      count_d[i]=1;
-      //THl[i]=THl[i]+THup;
-      //fprintf(fp2,"%d\t %d\t %d\n \n",i,int(t),spikecnt_d[i] );
-    }
-      */
 
     if(int(t)%1==0){
       spike_s[i]=0;
@@ -313,7 +274,7 @@ void calv(double *v,double *u,double *rs,double *s,double *s_egp,double *A_egp,d
 
   fprintf(fp3,"%lf \t %lf \n",t,V_s[3]);
   //fprintf(fp4,"%lf \t %lf \n",t,u[20]);
-  fprintf(fp6,"%lf \t %lf \n",t,v[128]);
+  fprintf(fp6,"%lf \t %lf \n",t,v[90]);
   fprintf(fp2,"%lf \t %lf \n",t,inp[128]);
   //  fprintf(fp2,"%lf \t %lf \n",t, (g_c/kappa)*(V_d[0]-V_s[0]) );
 
